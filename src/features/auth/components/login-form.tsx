@@ -12,6 +12,7 @@ import {z} from "zod"
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const loginSchema = z.object({
     email: z.email("Please enter a valid email address"),
@@ -63,8 +64,8 @@ export function LoginForm() {
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="grid gap-6">
                                 <div className="flex flex-col gap-4">
-                                    <Button variant={'outline'} className="w-full" type="button" disabled={isPending}>Continue with GitHub</Button>
-                                    <Button variant={'outline'} className="w-full" type="button" disabled={isPending}>Continue with Google</Button>
+                                    <Button variant={'outline'} className="w-full" type="button" disabled={isPending}><Image alt="github" src={'/github.svg'} width={20} height={20}/> Continue with GitHub</Button>
+                                    <Button variant={'outline'} className="w-full" type="button" disabled={isPending}><Image alt="github" src={'/google.svg'} width={20} height={20}/> Continue with Google</Button>
                                 </div>
                                 <div className="grid gap-6">
                                     <FormField control={form.control} name="email" render={({field}) => (
