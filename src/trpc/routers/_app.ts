@@ -7,9 +7,6 @@ import { generateText } from 'ai';
 
 export const appRouter = createTRPCRouter({
   testAi: protectedProcedure.mutation(async () => {
-
-    
-
     await inngest.send({
       name: "execute/ai",
     })
