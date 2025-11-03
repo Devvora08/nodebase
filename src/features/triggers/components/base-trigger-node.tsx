@@ -4,16 +4,18 @@ import type {LucideIcon} from "lucide-react"
 import { memo, ReactNode } from "react";
 import { WorkflowNode } from "../../../components/workflow-node";
 import { BaseNode, BaseNodeContent } from "../../../components/react-flow/base-node";
-import { NodeProps, Position } from "@xyflow/react";
+import { NodeProps, Position, useReactFlow } from "@xyflow/react";
 import Image from "next/image";
 import { BaseHandle } from "../../../components/react-flow/base-handle";
+import { node } from "@sentry/core";
+import { type NodeStatus, NodeStatusIndicator } from "@/components/react-flow/node-status-indicator";
 
 interface BaseTriggerNodeProps extends NodeProps {
     icon: LucideIcon | string;
     name: string;
     description?: string;
     children?: ReactNode;
-    // status?: NodeStatus;
+    status?: NodeStatus;
     onSettings?: () => void;
     onDoubleClick?: () => void;
 }
@@ -25,13 +27,29 @@ export const BaseTriggerNode = memo(
         name,
         description,
         children, 
+        status="initial",
         onSettings,
         onDoubleClick
     }: BaseTriggerNodeProps) => {
-        const handleDelete = () => {}
+        const {setNodes, setEdges} = useReactFlow()
+        const handleDelete = () => {
+            setNodes(currentNodes => {
+                const updatedNodes = currentNodes.filter(node => node.id !== id);
+                return updatedNodes;
+            });
+
+            setEdges(currentEdges => {
+                const updatedEdges = currentEdges.filter(
+                    edge => edge.source !== id && edge.target !== id
+                );
+                return updatedEdges;
+            })
+        }
+
         return (
             <WorkflowNode name={name} description={description} onDelete={handleDelete} showToolbar onSettings={onSettings}>
-                <BaseNode className="rounded-l-2xl relative group" onDoubleClick={onDoubleClick}>
+                <NodeStatusIndicator className="rounded-l-2xl" status={status} variant="border">
+                <BaseNode status={status} className="rounded-l-2xl relative group" onDoubleClick={onDoubleClick}>
                     <BaseNodeContent>
                         {typeof Icon === "string" ? (
                             <Image src={Icon} alt={name} width={16} height={16}/>
@@ -46,6 +64,7 @@ export const BaseTriggerNode = memo(
                         />
                     </BaseNodeContent>
                 </BaseNode>
+                </NodeStatusIndicator>
             </WorkflowNode>
         )
     }
