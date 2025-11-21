@@ -62,7 +62,7 @@ export const HttpRequestDialog = ({ open, onOpenChange, onSubmit, defaultValues=
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent>
+            <DialogContent className="max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>HTTP Request</DialogTitle>
                     <DialogDescription>
