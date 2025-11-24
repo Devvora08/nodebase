@@ -9,7 +9,8 @@
     "lint": "biome check",
     "format": "biome format --write",
     "inngest:dev": "inngest-cli dev",
-    "dev:all": "mprocs"
+    "dev:all": "mprocs",
+    "ngrok:dev":"ngrok http --url=known-intense-egret.ngrok-free.app 3000"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.38",
