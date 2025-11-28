@@ -10,7 +10,7 @@
     "format": "biome format --write",
     "inngest:dev": "inngest-cli dev",
     "dev:all": "mprocs",
-    "ngrok:dev":"ngrok http --url=known-intense-egret.ngrok-free.app 3000"
+    "ngrok:dev": "ngrok http --url=known-intense-egret.ngrok-free.app 3000"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.38",
@@ -63,6 +63,7 @@
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "handlebars": "^4.7.8",
+    "html-entities": "^2.6.0",
     "inngest": "^3.44.3",
     "input-otp": "^1.4.2",
     "jotai": "^2.15.1",
