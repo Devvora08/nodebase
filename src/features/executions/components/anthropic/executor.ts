@@ -1,9 +1,10 @@
 import type { NodeExecutor } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
 import Handlebars from "handlebars"
-import {createAnthropic} from "@ai-sdk/anthropic"
-import {generateText} from "ai"
+import { createAnthropic } from "@ai-sdk/anthropic"
+import { generateText } from "ai"
 import { anthropicChannel } from "@/inngest/channels/anthropic";
+import prisma from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) => {
     const jsonString = JSON.stringify(context, null, 2);
@@ -16,6 +17,7 @@ type AnthropicData = {
     variableName?: string;
     systemPrompt?: string;
     userPrompt?: string;
+    credentialId?: string;
 }
 
 export const AnthropicExecutor: NodeExecutor<AnthropicData> = async ({ nodeId, context, step, data, publish }) => {
@@ -26,37 +28,58 @@ export const AnthropicExecutor: NodeExecutor<AnthropicData> = async ({ nodeId, c
         })
     )
 
-    if(!data.variableName) {
+    if (!data.variableName) {
         await publish(
             anthropicChannel().status({
                 nodeId,
-                status:"error",
+                status: "error",
             })
         );
-        throw new NonRetriableError("OpenAi node: Variable name is missing")
+        throw new NonRetriableError("Anthropic node: Variable name is missing")
     }
 
-    if(!data.userPrompt) {
+    if (!data.credentialId) {
         await publish(
             anthropicChannel().status({
                 nodeId,
-                status:"error",
+                status: "error",
             })
         );
-        throw new NonRetriableError("OpenAi node: User prompt is missing")
+        throw new NonRetriableError("Anthropic node: Credential id is missing")
+    }
+
+    if (!data.userPrompt) {
+        await publish(
+            anthropicChannel().status({
+                nodeId,
+                status: "error",
+            })
+        );
+        throw new NonRetriableError("Anthropic node: User prompt is missing")
     }
 
     const systemPrompt = data.systemPrompt ? Handlebars.compile(data.systemPrompt)(context) : "You are a helpful assistant.";
     const userPrompt = Handlebars.compile(data.userPrompt)(context);
 
-    const credentialValue = process.env.ANTHROPIC_API_KEY!
+    const credential = await step.run("get-credential", () => {
+        return prisma.credential.findUnique({
+            where: {
+                id: data.credentialId
+            }
+        })
+    })
+
+    if(!credential) {
+        throw new NonRetriableError("Anthropic node: credential not found")
+    }
+
 
     const anthropic = createAnthropic({
-        apiKey: credentialValue,
+        apiKey: credential.value,
     });
 
     try {
-        const {steps} = await step.ai.wrap("anthropic-generate-text",
+        const { steps } = await step.ai.wrap("anthropic-generate-text",
             generateText,
             {
                 model: anthropic("claude-sonnet-4-5"),
