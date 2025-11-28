@@ -1,7 +1,7 @@
 "use client"
 
 import { NodeType } from "@/generated/prisma"
-import {createId} from "@paralleldrive/cuid2"
+import { createId } from "@paralleldrive/cuid2"
 import { GlobeIcon, MousePointerIcon } from "lucide-react";
 import React, { useCallback } from "react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
@@ -13,7 +13,7 @@ export type NodeTypeOption = {
     type: NodeType;
     label: string;
     description: string;
-    icon: React.ComponentType<{className?: string}> | string;
+    icon: React.ComponentType<{ className?: string }> | string;
 }
 
 const triggerNodes: NodeTypeOption[] = [
@@ -29,7 +29,7 @@ const triggerNodes: NodeTypeOption[] = [
         description: "Runs the flow on when a Google form is submitted",
         icon: "/googleform.svg",
     },
-      {
+    {
         type: NodeType.STRIPE_TRIGGER,
         label: "Stripe Event Form",
         description: "Runs the flow on when a Stripe Event is captured",
@@ -62,23 +62,35 @@ const executionNodes: NodeTypeOption[] = [
         description: "Uses Anthropic to generate text",
         icon: "/anthropic.svg",
     },
+    {
+        type: NodeType.DISCORD,
+        label: "Discord",
+        description: "Send a message to Discord",
+        icon: "/discord.svg",
+    },
+    {
+        type: NodeType.SLACK,
+        label: "Slack",
+        description: "Send a message to Slack",
+        icon: "/slack.svg",
+    },
 ]
 
 interface NodeSelectorProps {
     open: boolean;
-    onOpenChange: (open:boolean) => void;
+    onOpenChange: (open: boolean) => void;
     children: React.ReactNode
 }
 
-export function NodeSelector({open, onOpenChange, children} : NodeSelectorProps) {
-    const {setNodes, getNodes, screenToFlowPosition} = useReactFlow()
+export function NodeSelector({ open, onOpenChange, children }: NodeSelectorProps) {
+    const { setNodes, getNodes, screenToFlowPosition } = useReactFlow()
 
     const handleNodeSelect = useCallback((selection: NodeTypeOption) => {
-        if(selection.type === NodeType.MANUAL_TRIGGER) {
+        if (selection.type === NodeType.MANUAL_TRIGGER) {
             const nodes = getNodes();
             const hasManualTrigger = nodes.some(node => node.type === NodeType.MANUAL_TRIGGER)
 
-            if(hasManualTrigger) {
+            if (hasManualTrigger) {
                 toast.error("Only 1 manual trigger is allowed per workflow");
                 return;
             }
@@ -95,14 +107,14 @@ export function NodeSelector({open, onOpenChange, children} : NodeSelectorProps)
                 y: centerY + (Math.random() - 0.5) * 200,
             })
 
-            const newNode  = {
+            const newNode = {
                 id: createId(),
                 data: {},
                 position: flowPosition,
                 type: selection.type
             };
 
-            if(hasInitialTrigger) {
+            if (hasInitialTrigger) {
                 return [newNode]
             };
 
@@ -128,12 +140,12 @@ export function NodeSelector({open, onOpenChange, children} : NodeSelectorProps)
                         const Icon = nodeType.icon;
 
                         return (
-                            <div key={nodeType.type} className="w-full justify-start h-auto py-5 px-4 rounded-none cursor-pointer border-l-2 border-transparent hover:border-l-primary" onClick={()=> handleNodeSelect(nodeType)}>
+                            <div key={nodeType.type} className="w-full justify-start h-auto py-5 px-4 rounded-none cursor-pointer border-l-2 border-transparent hover:border-l-primary" onClick={() => handleNodeSelect(nodeType)}>
                                 <div className="flex items-center gap-6 w-full overflow-hidden">
-                                    {typeof Icon === "string"? (
-                                        <img src={Icon} alt={nodeType.label} className="size-5 object-contain rounded-sm"/>
+                                    {typeof Icon === "string" ? (
+                                        <img src={Icon} alt={nodeType.label} className="size-5 object-contain rounded-sm" />
                                     ) : (
-                                        <Icon className="size-5"/>
+                                        <Icon className="size-5" />
                                     )}
                                     <div className="flex flex-col items-start text-left">
                                         <span className="font-medium text-sm">
@@ -146,18 +158,18 @@ export function NodeSelector({open, onOpenChange, children} : NodeSelectorProps)
                         )
                     })}
                 </div>
-                <Separator/>
+                <Separator />
                 <div>
                     {executionNodes.map((nodeType) => {
                         const Icon = nodeType.icon;
 
                         return (
-                            <div key={nodeType.type} className="w-full justify-start h-auto py-5 px-4 rounded-none cursor-pointer border-l-2 border-transparent hover:border-l-primary" onClick={()=> handleNodeSelect(nodeType)}>
+                            <div key={nodeType.type} className="w-full justify-start h-auto py-5 px-4 rounded-none cursor-pointer border-l-2 border-transparent hover:border-l-primary" onClick={() => handleNodeSelect(nodeType)}>
                                 <div className="flex items-center gap-6 w-full overflow-hidden">
-                                    {typeof Icon === "string"? (
-                                        <img src={Icon} alt={nodeType.label} className="size-5 object-contain rounded-sm"/>
+                                    {typeof Icon === "string" ? (
+                                        <img src={Icon} alt={nodeType.label} className="size-5 object-contain rounded-sm" />
                                     ) : (
-                                        <Icon className="size-5"/>
+                                        <Icon className="size-5" />
                                     )}
                                     <div className="flex flex-col items-start text-left">
                                         <span className="font-medium text-sm">
