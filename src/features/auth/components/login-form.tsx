@@ -46,6 +46,32 @@ export function LoginForm() {
         })
     }
 
+    const signInGithub = async() => {
+        await authClient.signIn.social({
+            provider: "github",
+        }, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: () => {
+                toast.error("Something went wrong")
+            }
+        })
+    }
+
+    const signInGoogle = async() => {
+        await authClient.signIn.social({
+            provider: "google",
+        }, {
+            onSuccess: () => {
+                router.push("/");
+            },
+            onError: () => {
+                toast.error("Something went wrong")
+            }
+        })
+    }
+
     const isPending = form.formState.isSubmitting;
 
     return (
@@ -64,8 +90,8 @@ export function LoginForm() {
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="grid gap-6">
                                 <div className="flex flex-col gap-4">
-                                    <Button variant={'outline'} className="w-full" type="button" disabled={isPending}><Image alt="github" src={'/github.svg'} width={20} height={20}/> Continue with GitHub</Button>
-                                    <Button variant={'outline'} className="w-full" type="button" disabled={isPending}><Image alt="github" src={'/google.svg'} width={20} height={20}/> Continue with Google</Button>
+                                    <Button variant={'outline'} onClick={signInGithub} className="w-full" type="button" disabled={isPending}><Image alt="github" src={'/github.svg'} width={20} height={20}/> Continue with GitHub</Button>
+                                    <Button variant={'outline'} onClick={signInGoogle} className="w-full" type="button" disabled={isPending}><Image alt="google" src={'/google.svg'} width={20} height={20}/> Continue with Google</Button>
                                 </div>
                                 <div className="grid gap-6">
                                     <FormField control={form.control} name="email" render={({field}) => (
